@@ -8,7 +8,7 @@ import ru.practicum.ewm.hit.storage.HitRepository;
 
 @Service
 @RequiredArgsConstructor
-public class HitServiceImpl implements HitService{
+public class HitServiceImpl implements HitService {
     private final HitRepository hitRepository;
 
     @Override

@@ -1,7 +1,6 @@
 package ru.practicum.ewm.hit.model;
 
 import lombok.Data;
-import lombok.Generated;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
