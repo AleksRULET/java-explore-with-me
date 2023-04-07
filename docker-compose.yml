@@ -29,7 +29,7 @@ services:
     build: ./ewm-main-service
     image: explore-with-me/ewm-service
     restart: always
-    container_name: ewm-stats-service
+    container_name: ewm-main-service
     ports:
       - "8080:8080"
     depends_on:
