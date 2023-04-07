@@ -2,7 +2,6 @@ package ru.practicum.ewm.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 import javax.validation.constraints.NotBlank;
