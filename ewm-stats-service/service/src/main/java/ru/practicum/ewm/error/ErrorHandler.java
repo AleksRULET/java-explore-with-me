@@ -19,7 +19,7 @@ public class ErrorHandler {
         log.warn(validationException.getMessage());
         return new ErrorResponse(validationException.getMessage());
     }
-/*
+
     @ExceptionHandler
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ErrorResponse handleThrowable(final Throwable e) {
@@ -27,5 +27,5 @@ public class ErrorHandler {
         return new ErrorResponse(
                 "An unexpected error has occurred."
         );
-    }*/
+    }
 }

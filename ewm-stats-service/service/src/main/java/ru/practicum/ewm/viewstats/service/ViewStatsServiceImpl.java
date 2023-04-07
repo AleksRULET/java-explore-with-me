@@ -1,6 +1,6 @@
 package ru.practicum.ewm.viewstats.service;
 
-import lombok.RequiredArgsConstructor;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.practicum.ewm.dto.ViewStatsDto;
 import ru.practicum.ewm.viewstats.model.ViewMapper;
@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-@RequiredArgsConstructor
+@AllArgsConstructor
 public class ViewStatsServiceImpl implements ViewStatsServis {
     private final ViewStatsRepository viewStatsRepository;
 

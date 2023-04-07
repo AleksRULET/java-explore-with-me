@@ -14,14 +14,14 @@ import java.util.List;
 public interface ViewStatsRepository extends JpaRepository<Hit, Long> {
     @Query("SELECT new ru.practicum.ewm.viewstats.model.ViewStats(v.app, v.uri, COUNT(v.ip)) " +
             "FROM Hit AS v " +
-            "WHERE v.created BETWEEN :start AND :end " +
+            "WHERE v.timestamp BETWEEN :start AND :end " +
             "GROUP BY v.app, v.uri " +
             "ORDER BY COUNT(v.ip) DESC")
     List<ViewStats> findViewStats(@Param("start") LocalDateTime start, @Param("end") LocalDateTime end);
 
     @Query("SELECT new ru.practicum.ewm.viewstats.model.ViewStats(v.app, v.uri, COUNT(DISTINCT v.ip)) " +
             "FROM Hit AS v " +
-            "WHERE v.created BETWEEN :start AND :end " +
+            "WHERE v.timestamp BETWEEN :start AND :end " +
             "AND v.uri IN :uris " +
             "GROUP BY v.app, v.uri " +
             "ORDER BY COUNT(DISTINCT v.ip) DESC")
@@ -29,7 +29,7 @@ public interface ViewStatsRepository extends JpaRepository<Hit, Long> {
 
     @Query("SELECT new ru.practicum.ewm.viewstats.model.ViewStats(v.app, v.uri, COUNT(v.ip)) " +
             "FROM Hit AS v " +
-            "WHERE v.created BETWEEN :start AND :end " +
+            "WHERE v.timestamp BETWEEN :start AND :end " +
             "AND v.uri IN :uris " +
             "GROUP BY v.app, v.uri " +
             "ORDER BY COUNT(v.ip) DESC")
@@ -37,7 +37,7 @@ public interface ViewStatsRepository extends JpaRepository<Hit, Long> {
 
     @Query("SELECT new ru.practicum.ewm.viewstats.model.ViewStats(v.app, v.uri, COUNT(DISTINCT v.ip)) " +
             "FROM Hit AS v " +
-            "WHERE v.created BETWEEN :start AND :end " +
+            "WHERE v.timestamp BETWEEN :start AND :end " +
             "GROUP BY v.app, v.uri " +
             "ORDER BY COUNT(DISTINCT v.ip) DESC")
     List<ViewStats> findUniqueViewStats(@Param("start") LocalDateTime start, @Param("end") LocalDateTime end);
