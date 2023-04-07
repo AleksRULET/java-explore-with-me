@@ -12,7 +12,7 @@ import javax.validation.Valid;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/hit")
+@RequestMapping(path = "/hit")
 public class HitController {
     private final HitService hitService;
 
