@@ -8,7 +8,7 @@ public class HitMapper {
         hit.setApp(hitDto.getApp());
         hit.setUri(hitDto.getUri());
         hit.setIp(hitDto.getIp());
-        hit.setCreated(hitDto.getCreated());
+        hit.setTimestamp(hitDto.getTimestamp());
         return hit;
     }
 }

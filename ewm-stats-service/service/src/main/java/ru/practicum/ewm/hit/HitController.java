@@ -7,8 +7,6 @@ import org.springframework.web.bind.annotation.*;
 import ru.practicum.ewm.dto.HitDto;
 import ru.practicum.ewm.hit.service.HitService;
 
-import javax.validation.Valid;
-
 @Slf4j
 @RestController
 @RequiredArgsConstructor
@@ -18,7 +16,7 @@ public class HitController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public void createHit(@Valid @RequestBody HitDto hitDto) {
+    public void createHit( @RequestBody HitDto hitDto) {
         hitService.addHit(hitDto);
         log.info("Hit created.");
     }

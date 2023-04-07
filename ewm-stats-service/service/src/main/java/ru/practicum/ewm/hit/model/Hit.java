@@ -19,6 +19,6 @@ public class Hit {
     private String uri;
     @Column(name = "ip")
     private String ip;
-    @Column(name = "created")
-    private LocalDateTime created;
+    @Column(name = "timestamp")
+    private LocalDateTime timestamp;
 }
