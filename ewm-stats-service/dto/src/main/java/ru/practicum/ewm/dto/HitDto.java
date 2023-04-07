@@ -13,10 +13,6 @@ import java.time.LocalDateTime;
 @ToString
 public class HitDto {
     @NotBlank
-    @ToString.Exclude
-    @EqualsAndHashCode.Exclude
-    private Long id;
-    @NotBlank
     private String app;
     @NotBlank
     private String uri;

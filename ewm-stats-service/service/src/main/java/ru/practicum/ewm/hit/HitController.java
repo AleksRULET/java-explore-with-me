@@ -18,7 +18,7 @@ public class HitController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public void creatHit(@Valid @RequestBody HitDto hitDto) {
+    public void createHit(@Valid @RequestBody HitDto hitDto) {
         hitService.addHit(hitDto);
         log.info("Hit created.");
     }
