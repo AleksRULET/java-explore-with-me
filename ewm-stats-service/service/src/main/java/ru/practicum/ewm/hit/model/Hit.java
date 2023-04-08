@@ -1,13 +1,15 @@
 package ru.practicum.ewm.hit.model;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "hits")
-@Data
+@Getter
+@Setter
 public class Hit {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

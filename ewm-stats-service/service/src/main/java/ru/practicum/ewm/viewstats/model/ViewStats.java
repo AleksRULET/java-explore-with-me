@@ -1,9 +1,11 @@
 package ru.practicum.ewm.viewstats.model;
 
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 public class ViewStats {
     private String app;
