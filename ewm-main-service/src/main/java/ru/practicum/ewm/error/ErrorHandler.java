@@ -16,7 +16,6 @@ import ru.practicum.ewm.error.model.ApiError;
 import javax.validation.ConstraintViolationException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.time.DateTimeException;
 import java.time.LocalDateTime;
 import java.util.List;
 
