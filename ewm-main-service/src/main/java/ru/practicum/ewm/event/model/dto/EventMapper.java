@@ -57,7 +57,7 @@ public class EventMapper {
         event.setRequestModeration(updateEventAdminRequest.getRequestModeration());
         event.setState(State.of(updateEventAdminRequest.getAdminAction()));
         event.setTitle(updateEventAdminRequest.getTitle());
-        if (updateEventAdminRequest.getLocation() == null){
+        if (updateEventAdminRequest.getLocation() == null) {
             event.setLocation(null);
         } else {
             event.setLocation(LocationMapper.toLocation(updateEventAdminRequest.getLocation()));
@@ -90,7 +90,7 @@ public class EventMapper {
         event.setParticipantLimit(updateEventUserRequest.getParticipantLimit());
         event.setState(State.of(updateEventUserRequest.getUserAction()));
         event.setTitle(updateEventUserRequest.getTitle());
-        if (updateEventUserRequest.getLocation() == null){
+        if (updateEventUserRequest.getLocation() == null) {
             event.setLocation(null);
         } else {
             event.setLocation(LocationMapper.toLocation(updateEventUserRequest.getLocation()));
