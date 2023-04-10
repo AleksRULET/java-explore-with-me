@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import org.springframework.http.HttpStatus;
+import ru.practicum.ewm.util.constant.DateFormat;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -16,7 +17,7 @@ public class ApiError {
     private HttpStatus status;
     private String reason;
     private String message;
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DateFormat.PATTERN)
     private LocalDateTime timestamp;
     private List<String> errors;
 }

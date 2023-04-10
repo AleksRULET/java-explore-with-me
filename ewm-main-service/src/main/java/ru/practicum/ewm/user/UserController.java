@@ -8,6 +8,7 @@ import ru.practicum.ewm.user.model.dto.NewUserRequest;
 import ru.practicum.ewm.user.model.dto.UserDto;
 import ru.practicum.ewm.user.service.UserService;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @Slf4j
@@ -27,7 +28,7 @@ public class UserController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public UserDto creatUser(@RequestBody NewUserRequest newUserRequest) {
+    public UserDto creatUser(@Valid @RequestBody NewUserRequest newUserRequest) {
         return userService.add(newUserRequest);
     }
 
