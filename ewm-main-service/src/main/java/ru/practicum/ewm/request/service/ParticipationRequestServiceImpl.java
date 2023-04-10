@@ -53,7 +53,12 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
             throw new ParticipationRequestUserViolationException("Event owner can't create participation request for that event");
         }
         if (event.getState() != State.PUBLISHED) {
-            throw new ParticipationRequestEventStatusViolationException("Participation request can't be created for event");
+            throw new ParticipationRequestEventStatusViolationException(String.format("Participation request can't be " +
+                    "created for event id : %s state : %s" + event, eventId, event.getState()));
+        }
+        List<ParticipationRequest> requestsUser = participationRequestRepository.findByRequesterAndEvent(requester, event);
+        if (!requestsUser.isEmpty()) {
+            throw new ParticipationRequestUserViolationException("Request already exist");
         }
         validateParticipationLimit(event);
         ParticipationRequest participationRequest = new ParticipationRequest();

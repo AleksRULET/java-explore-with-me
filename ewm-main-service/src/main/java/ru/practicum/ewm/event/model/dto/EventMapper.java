@@ -41,7 +41,7 @@ public class EventMapper {
         eventShortDto.setPaid(event.getPaid());
         eventShortDto.setTitle(event.getTitle());
         eventShortDto.setParticipantLimit(event.getParticipantLimit());
-        eventShortDto.setInitiatorId(UserMapper.toUserShortDto(event.getInitiator()));
+        eventShortDto.setInitiator(UserMapper.toUserShortDto(event.getInitiator()));
         eventShortDto.setCategory(CategoryMapper.toCategoryDto(event.getCategory()));
         return eventShortDto;
     }
@@ -55,7 +55,7 @@ public class EventMapper {
         event.setPaid(updateEventAdminRequest.getPaid());
         event.setParticipantLimit(updateEventAdminRequest.getParticipantLimit());
         event.setRequestModeration(updateEventAdminRequest.getRequestModeration());
-        event.setState(State.of(updateEventAdminRequest.getAdminAction()));
+        event.setState(State.of(updateEventAdminRequest.getStateAction()));
         event.setTitle(updateEventAdminRequest.getTitle());
         if (updateEventAdminRequest.getLocation() == null) {
             event.setLocation(null);
@@ -88,7 +88,7 @@ public class EventMapper {
         event.setEventDate(updateEventUserRequest.getEventDate());
         event.setPaid(updateEventUserRequest.getPaid());
         event.setParticipantLimit(updateEventUserRequest.getParticipantLimit());
-        event.setState(State.of(updateEventUserRequest.getUserAction()));
+        event.setState(State.of(updateEventUserRequest.getStateAction()));
         event.setTitle(updateEventUserRequest.getTitle());
         if (updateEventUserRequest.getLocation() == null) {
             event.setLocation(null);

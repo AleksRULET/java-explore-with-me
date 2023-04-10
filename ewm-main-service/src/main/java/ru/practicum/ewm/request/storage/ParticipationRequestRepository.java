@@ -3,9 +3,11 @@ package ru.practicum.ewm.request.storage;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import ru.practicum.ewm.event.model.Event;
 import ru.practicum.ewm.request.model.ParticipationRequest;
 import ru.practicum.ewm.request.model.RequestCounter;
 import ru.practicum.ewm.state.Status;
+import ru.practicum.ewm.user.model.User;
 
 import java.util.List;
 import java.util.Optional;
@@ -52,4 +54,6 @@ public interface ParticipationRequestRepository extends JpaRepository<Participat
             "group by pr.event.id")
     List<RequestCounter> countRequestsForEvents(@Param("eventIds") List<Long> eventId,
                                                 @Param("statuses") List<Status> statuses);
+
+    List<ParticipationRequest> findByRequesterAndEvent(User requester, Event event);
 }

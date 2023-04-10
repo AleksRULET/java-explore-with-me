@@ -7,6 +7,7 @@ import lombok.Setter;
 import lombok.ToString;
 import ru.practicum.ewm.location.model.dto.LocationDto;
 import ru.practicum.ewm.state.AdminAction;
+import ru.practicum.ewm.util.constant.DateFormat;
 
 import java.time.LocalDateTime;
 
@@ -18,12 +19,12 @@ public class UpdateEventAdminRequest {
     private String annotation;
     private Long category;
     private String description;
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = DateFormat.PATTERN)
     private LocalDateTime eventDate;
     private LocationDto location;
     private Boolean paid;
     private Integer participantLimit;
     private Boolean requestModeration;
-    private AdminAction adminAction;
+    private AdminAction stateAction;
     private String title;
 }

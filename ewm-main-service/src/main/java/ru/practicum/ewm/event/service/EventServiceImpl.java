@@ -154,8 +154,7 @@ public class EventServiceImpl implements AdminEventService, PublicEventService, 
                 .orElseThrow(() -> new EntityNotFoundException("Event not found"));
         Long categoryId = updateEventAdminRequest.getCategory();
         Category category = categoryId == null ? null : categoryRepository.findById(categoryId)
-                .orElseThrow(() -> new EntityNotFoundException(
-                        String.format("Category with id=%s was not found", categoryId)));
+                .orElseThrow(() -> new EntityNotFoundException("Category not found"));
         Event patchEvent = EventMapper.toEvent(updateEventAdminRequest, category);
         StateValidation.validateEventUpdateAdmin(event.getState(), patchEvent.getState());
         Event updatedEvent = jsonPatch.mergePatch(event, patchEvent, Event.class);
