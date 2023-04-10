@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 @Transactional
 public class CategoryServiceImpl implements CategoryService {
 
-    private CategoryRepository categoryRepository;
+    private final CategoryRepository categoryRepository;
 
     @Override
     public CategoryDto findCategory(Long id) {
@@ -37,7 +37,12 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public CategoryDto addCategory(NewCategoryDto newCategoryDto) {
-        return CategoryMapper.toCategoryDto(categoryRepository.save(CategoryMapper.toCategory(newCategoryDto)));
+        if (newCategoryDto != null) {
+            Category newCategory = CategoryMapper.toCategory(newCategoryDto);
+            Category createdCategory = categoryRepository.save(newCategory);
+            return CategoryMapper.toCategoryDto(createdCategory);
+        }
+        return null;
     }
 
     @Override
