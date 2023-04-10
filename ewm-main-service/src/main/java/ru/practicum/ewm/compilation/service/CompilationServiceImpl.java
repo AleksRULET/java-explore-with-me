@@ -11,7 +11,7 @@ import ru.practicum.ewm.compilation.model.dto.UpdateCompilationRequest;
 import ru.practicum.ewm.compilation.storage.CompilationRepository;
 import ru.practicum.ewm.error.exceptions.EntityNotFoundException;
 import ru.practicum.ewm.event.storage.EventRepository;
-import ru.practicum.main.utils.JsonPatch;
+import ru.practicum.ewm.util.JsonPatch;
 
 import java.util.Collections;
 import java.util.List;
