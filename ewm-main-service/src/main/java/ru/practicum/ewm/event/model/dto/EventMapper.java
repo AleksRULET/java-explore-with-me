@@ -9,6 +9,8 @@ import ru.practicum.ewm.state.State;
 import ru.practicum.ewm.user.model.User;
 import ru.practicum.ewm.user.model.dto.UserMapper;
 
+import javax.annotation.Nullable;
+
 @Component
 public class EventMapper {
 
@@ -44,7 +46,7 @@ public class EventMapper {
         return eventShortDto;
     }
 
-    public static Event toEvent(UpdateEventAdminRequest updateEventAdminRequest, Category category) {
+    public static Event toEvent(UpdateEventAdminRequest updateEventAdminRequest, @Nullable Category category) {
         Event event = new Event();
         event.setAnnotation(updateEventAdminRequest.getAnnotation());
         event.setCategory(category);
@@ -55,7 +57,11 @@ public class EventMapper {
         event.setRequestModeration(updateEventAdminRequest.getRequestModeration());
         event.setState(State.of(updateEventAdminRequest.getAdminAction()));
         event.setTitle(updateEventAdminRequest.getTitle());
-        event.setLocation(LocationMapper.toLocation(updateEventAdminRequest.getLocation()));
+        if (updateEventAdminRequest.getLocation() == null){
+            event.setLocation(null);
+        } else {
+            event.setLocation(LocationMapper.toLocation(updateEventAdminRequest.getLocation()));
+        }
         return event;
     }
 
@@ -74,7 +80,7 @@ public class EventMapper {
         return event;
     }
 
-    public static Event toEvent(UpdateEventUserRequest updateEventUserRequest, Category category) {
+    public static Event toEvent(UpdateEventUserRequest updateEventUserRequest, @Nullable Category category) {
         Event event = new Event();
         event.setAnnotation(updateEventUserRequest.getAnnotation());
         event.setCategory(category);
@@ -84,7 +90,11 @@ public class EventMapper {
         event.setParticipantLimit(updateEventUserRequest.getParticipantLimit());
         event.setState(State.of(updateEventUserRequest.getUserAction()));
         event.setTitle(updateEventUserRequest.getTitle());
-        event.setLocation(LocationMapper.toLocation(updateEventUserRequest.getLocation()));
+        if (updateEventUserRequest.getLocation() == null){
+            event.setLocation(null);
+        } else {
+            event.setLocation(LocationMapper.toLocation(updateEventUserRequest.getLocation()));
+        }
         return event;
     }
 }
