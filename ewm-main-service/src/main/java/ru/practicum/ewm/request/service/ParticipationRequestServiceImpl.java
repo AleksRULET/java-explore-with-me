@@ -29,7 +29,6 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
     private static final int UNLIMITED_PARTICIPATION_LIMIT = 0;
 
     private final ParticipationRequestRepository participationRequestRepository;
-    private final ParticipationRequestMapper participationRequestMapper;
     private final UserRepository userRepository;
     private final EventRepository eventRepository;
 
@@ -39,7 +38,7 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
                 .orElseThrow(() -> new EntityNotFoundException("User not found"));
         List<ParticipationRequest> participationRequests = participationRequestRepository.findAllWithRequester(userId);
         return participationRequests.stream()
-                .map(participationRequestMapper::toParticipationRequestDto)
+                .map(ParticipationRequestMapper::toParticipationRequestDto)
                 .collect(Collectors.toList());
     }
 
@@ -63,7 +62,7 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
         participationRequest.setCreated(LocalDateTime.now());
         participationRequest.setStatus(calculateParticipationStatus(event));
         ParticipationRequest createdParticipationRequest = participationRequestRepository.save(participationRequest);
-        return participationRequestMapper.toParticipationRequestDto(createdParticipationRequest);
+        return ParticipationRequestMapper.toParticipationRequestDto(createdParticipationRequest);
     }
 
     private void validateParticipationLimit(Event event) {
@@ -98,6 +97,6 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
                 .orElseThrow(() -> new EntityNotFoundException("Participation request not found"));
         participationRequest.setStatus(Status.CANCELED);
         ParticipationRequest updatedParticipationRequest = participationRequestRepository.save(participationRequest);
-        return participationRequestMapper.toParticipationRequestDto(updatedParticipationRequest);
+        return ParticipationRequestMapper.toParticipationRequestDto(updatedParticipationRequest);
     }
 }

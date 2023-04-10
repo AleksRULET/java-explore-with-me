@@ -45,7 +45,7 @@ public interface ParticipationRequestRepository extends JpaRepository<Participat
     List<ParticipationRequest> findAllByEventAndStatusesFetch(@Param("eventId") Long eventId,
                                                               @Param("statuses") List<Status> statuses);
 
-    @Query("select new ru.practicum.main.participation.storage.helper.RequestCountByEvent(pr.event.id, count(pr)) " +
+    @Query("select new ru.practicum.ewm.request.model.RequestCounter(pr.event.id, count(pr)) " +
             "from ParticipationRequest pr " +
             "where pr.event.id in :eventIds " +
             "and pr.status in :statuses " +

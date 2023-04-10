@@ -12,16 +12,16 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("admin/users")
+@RequestMapping("/admin/users")
 public class UserController {
 
     private final UserService userService;
 
     @GetMapping
-    public List<UserDto> getUsers(@RequestParam List<Long> userid,
+    public List<UserDto> getUsers(@RequestParam List<Long> ids,
                                   @RequestParam(defaultValue = "0") int from,
                                   @RequestParam(defaultValue = "10") int size) {
-        return userService.findUsers(userid, from, size);
+        return userService.findUsers(ids, from, size);
     }
 
     @PostMapping

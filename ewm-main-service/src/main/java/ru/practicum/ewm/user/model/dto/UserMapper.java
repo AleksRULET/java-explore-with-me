@@ -8,9 +8,9 @@ public class UserMapper {
 
     public static UserDto toUserDto(User user) {
         UserDto userDto = new UserDto();
-        userDto.setEmail(userDto.getEmail());
+        userDto.setEmail(user.getEmail());
         userDto.setId(user.getId());
-        userDto.setName(userDto.getName());
+        userDto.setName(user.getName());
         return userDto;
     }
 

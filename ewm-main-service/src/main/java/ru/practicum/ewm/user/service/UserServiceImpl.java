@@ -5,6 +5,7 @@ import org.springframework.data.domain.Pageable;
 
 import org.springframework.stereotype.Service;
 import ru.practicum.ewm.error.exceptions.EntityNotFoundException;
+import ru.practicum.ewm.user.model.User;
 import ru.practicum.ewm.user.model.dto.NewUserRequest;
 import ru.practicum.ewm.user.model.dto.UserDto;
 import ru.practicum.ewm.user.model.dto.UserMapper;
@@ -33,8 +34,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto add(NewUserRequest newUserRequest) {
-        return UserMapper.toUserDto(userRepository
-                .save(UserMapper.toUser(newUserRequest)));
+        User newUser = UserMapper.toUser(newUserRequest);
+        User createdUser = userRepository.save(newUser);
+        return UserMapper.toUserDto(createdUser);
     }
 
     @Override

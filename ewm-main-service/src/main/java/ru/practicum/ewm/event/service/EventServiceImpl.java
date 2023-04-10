@@ -49,13 +49,11 @@ public class EventServiceImpl implements AdminEventService, PublicEventService, 
     private static final int UNLIMITED_PARTICIPATION_LIMIT = 0;
 
     private final EventRepository eventRepository;
-    private final EventMapper eventMapper;
     private final UserRepository userRepository;
     private final CategoryRepository categoryRepository;
     private final JsonPatch jsonPatch;
     private final Client client;
     private final ParticipationRequestRepository participationRequestRepository;
-    private final ParticipationRequestMapper participationRequestMapper;
 
     @Transactional
     @Override
@@ -65,31 +63,31 @@ public class EventServiceImpl implements AdminEventService, PublicEventService, 
         Category category = categoryRepository.findById(newEventDto.getCategory())
                 .orElseThrow(() -> new EntityNotFoundException(
                         String.format("Category with id=%s was not found", newEventDto.getCategory())));
-        Event event = eventMapper.toEvent(newEventDto, category, initiator);
+        Event event = EventMapper.toEvent(newEventDto, category, initiator);
         event.setState(State.PENDING);
         event.setCreatedOn(LocalDateTime.now());
         Event createdEvent = eventRepository.save(event);
-        return eventMapper.toEventFullDto(createdEvent);
+        return EventMapper.toEventFullDto(createdEvent);
     }
 
     @Override
     public List<EventShortDto> findEvents(Long userId, int from, int size) {
         userRepository.findById(userId)
-                .orElseThrow(() -> new EntityNotFoundException(String.format("User not found")));
+                .orElseThrow(() -> new EntityNotFoundException("User not found"));
         Pageable pageable = PageRequestWithOffset.of(from, size);
         List<Event> events = eventRepository.findAllWithCategoryAndInitiator(userId, pageable);
         return events.stream()
-                .map(eventMapper::toEventShortDto)
+                .map(EventMapper::toEventShortDto)
                 .collect(Collectors.toList());
     }
 
     @Override
     public EventFullDto findEvent(Long userId, Long eventId) {
         userRepository.findById(userId)
-                .orElseThrow(() -> new EntityNotFoundException(String.format("User not found")));
+                .orElseThrow(() -> new EntityNotFoundException("User not found"));
         Event event = eventRepository.findWithCategoryAndInitiator(userId, eventId)
-                .orElseThrow(() -> new EntityNotFoundException(String.format("Event was not found")));
-        return eventMapper.toEventFullDto(event);
+                .orElseThrow(() -> new EntityNotFoundException("Event was not found"));
+        return EventMapper.toEventFullDto(event);
     }
 
     @Transactional
@@ -104,10 +102,10 @@ public class EventServiceImpl implements AdminEventService, PublicEventService, 
         Category category = categoryId == null ? null : categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new EntityNotFoundException(
                         String.format("Category with id=%s was not found", categoryId)));
-        Event patchEvent = eventMapper.toEvent(updateEventUserRequest, category);
+        Event patchEvent = EventMapper.toEvent(updateEventUserRequest, category);
         Event updatedEvent = jsonPatch.mergePatch(event, patchEvent, Event.class);
         updatedEvent = eventRepository.save(updatedEvent);
-        return eventMapper.toEventFullDto(updatedEvent);
+        return EventMapper.toEventFullDto(updatedEvent);
     }
 
     @Override
@@ -119,7 +117,7 @@ public class EventServiceImpl implements AdminEventService, PublicEventService, 
             return builder.and(getFiltersAdminEvents(parameters, event, builder).toArray(new Predicate[]{}));
         }, pageable).getContent();
         List<EventFullDto> eventFullDtos = events.stream()
-                .map(eventMapper::toEventFullDto)
+                .map(EventMapper::toEventFullDto)
                 .collect(Collectors.toList());
         Map<Long, Long> eventHits = client.getHits(events, parameters.getRangeStart(), parameters.getRangeEnd());
         eventFullDtos.forEach(ent -> ent.setViews(eventHits.getOrDefault(ent.getId(), 0L)));
@@ -158,7 +156,7 @@ public class EventServiceImpl implements AdminEventService, PublicEventService, 
         Category category = categoryId == null ? null : categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new EntityNotFoundException(
                         String.format("Category with id=%s was not found", categoryId)));
-        Event patchEvent = eventMapper.toEvent(updateEventAdminRequest, category);
+        Event patchEvent = EventMapper.toEvent(updateEventAdminRequest, category);
         StateValidation.validateEventUpdateAdmin(event.getState(), patchEvent.getState());
         Event updatedEvent = jsonPatch.mergePatch(event, patchEvent, Event.class);
         EventDateValidation.validateEventUpdateAdmin(updatedEvent.getEventDate());
@@ -172,7 +170,7 @@ public class EventServiceImpl implements AdminEventService, PublicEventService, 
             updatedEvent.setPublishedOn(publishOn);
         }
         updatedEvent = eventRepository.save(updatedEvent);
-        return eventMapper.toEventFullDto(updatedEvent);
+        return EventMapper.toEventFullDto(updatedEvent);
     }
 
     @Override
@@ -194,7 +192,7 @@ public class EventServiceImpl implements AdminEventService, PublicEventService, 
         }, pageable).getContent();
         Map<Long, Long> eventHits = client.getHits(events, parameters.getRangeStart(), parameters.getRangeEnd());
         List<EventShortDto> eventShortDtos = events.stream()
-                .map(eventMapper::toEventShortDto)
+                .map(EventMapper::toEventShortDto)
                 .collect(Collectors.toList());
         eventShortDtos.forEach(ent -> ent.setViews(eventHits.getOrDefault(ent.getId(), 0L)));
         Map<Long, Long> eventConfReq = getConfirmedRequestsCount(events);
@@ -269,7 +267,7 @@ public class EventServiceImpl implements AdminEventService, PublicEventService, 
             return builder.and(Predicates.hasStatusPublished(eventRoot, builder),
                     Predicates.hasEventId(eventRoot, builder, eventId));
         }).orElseThrow(() -> new EntityNotFoundException(String.format("Event with id=%s was not found", eventId)));
-        EventFullDto eventFullDto = eventMapper.toEventFullDto(event);
+        EventFullDto eventFullDto = EventMapper.toEventFullDto(event);
         eventFullDto.setViews(client.getHit(eventFullDto.getId()));
         eventFullDto.setConfirmedRequests(getConfirmedRequestsCount(event));
         return eventFullDto;
@@ -288,7 +286,7 @@ public class EventServiceImpl implements AdminEventService, PublicEventService, 
                 .orElseThrow(() -> new EntityNotFoundException(String.format("Event with id=%s was not found", eventId)));
         List<ParticipationRequest> participationRequests = participationRequestRepository.findAllWithEvent(eventId);
         return participationRequests.stream()
-                .map(participationRequestMapper::toParticipationRequestDto)
+                .map(ParticipationRequestMapper::toParticipationRequestDto)
                 .collect(Collectors.toList());
     }
 
@@ -313,7 +311,7 @@ public class EventServiceImpl implements AdminEventService, PublicEventService, 
                                                                       List<ParticipationRequest> participationRequests) {
         if (event.getParticipantLimit().equals(UNLIMITED_PARTICIPATION_LIMIT) || !event.getRequestModeration()) {
             List<ParticipationRequestDto> participationRequestDtos = participationRequests.stream()
-                    .map(participationRequestMapper::toParticipationRequestDto)
+                    .map(ParticipationRequestMapper::toParticipationRequestDto)
                     .collect(Collectors.toList());
             EventRequestStatusUpdateResult eventRequestStatusUpdateResult = new EventRequestStatusUpdateResult();
             eventRequestStatusUpdateResult.setConfirmedRequests(participationRequestDtos);
@@ -333,7 +331,7 @@ public class EventServiceImpl implements AdminEventService, PublicEventService, 
         participationRequestRepository.saveAll(participationRequests);
         EventRequestStatusUpdateResult eventRequestStatusUpdateResult = new EventRequestStatusUpdateResult();
         List<ParticipationRequestDto> confirmedRequests = participationRequests.stream()
-                .map(participationRequestMapper::toParticipationRequestDto)
+                .map(ParticipationRequestMapper::toParticipationRequestDto)
                 .collect(Collectors.toList());
         eventRequestStatusUpdateResult.setConfirmedRequests(confirmedRequests);
         if (availableParticipationLimit == participationRequests.size()) {
@@ -342,7 +340,7 @@ public class EventServiceImpl implements AdminEventService, PublicEventService, 
             rejectedParticipationRequests.forEach(pr -> pr.setStatus(Status.REJECTED));
             participationRequestRepository.saveAll(rejectedParticipationRequests);
             List<ParticipationRequestDto> rejectedRequests = rejectedParticipationRequests.stream()
-                    .map(participationRequestMapper::toParticipationRequestDto)
+                    .map(ParticipationRequestMapper::toParticipationRequestDto)
                     .collect(Collectors.toList());
             eventRequestStatusUpdateResult.setRejectedRequests(rejectedRequests);
         }
@@ -354,7 +352,7 @@ public class EventServiceImpl implements AdminEventService, PublicEventService, 
         participationRequests.forEach(pr -> pr.setStatus(Status.REJECTED));
         participationRequestRepository.saveAll(participationRequests);
         List<ParticipationRequestDto> participationRequestDtos = participationRequests.stream()
-                .map(participationRequestMapper::toParticipationRequestDto)
+                .map(ParticipationRequestMapper::toParticipationRequestDto)
                 .collect(Collectors.toList());
         EventRequestStatusUpdateResult eventRequestStatusUpdateResult = new EventRequestStatusUpdateResult();
         eventRequestStatusUpdateResult.setRejectedRequests(participationRequestDtos);

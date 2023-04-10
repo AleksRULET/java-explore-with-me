@@ -1,5 +1,6 @@
 package ru.practicum.ewm.event.model.dto;
 
+import org.springframework.stereotype.Component;
 import ru.practicum.ewm.category.model.Category;
 import ru.practicum.ewm.category.model.dto.CategoryMapper;
 import ru.practicum.ewm.event.model.Event;
@@ -8,9 +9,10 @@ import ru.practicum.ewm.state.State;
 import ru.practicum.ewm.user.model.User;
 import ru.practicum.ewm.user.model.dto.UserMapper;
 
+@Component
 public class EventMapper {
 
-    public EventFullDto toEventFullDto(Event event) {
+    public static EventFullDto toEventFullDto(Event event) {
         EventFullDto eventFullDto = new EventFullDto();
         eventFullDto.setEventDate(event.getEventDate());
         eventFullDto.setAnnotation(event.getAnnotation());
@@ -29,7 +31,7 @@ public class EventMapper {
         return eventFullDto;
     }
 
-    public EventShortDto toEventShortDto(Event event) {
+    public static EventShortDto toEventShortDto(Event event) {
         EventShortDto eventShortDto = new EventShortDto();
         eventShortDto.setAnnotation(event.getAnnotation());
         eventShortDto.setEventDate(event.getEventDate());
@@ -42,7 +44,7 @@ public class EventMapper {
         return eventShortDto;
     }
 
-    public Event toEvent(UpdateEventAdminRequest updateEventAdminRequest, Category category) {
+    public static Event toEvent(UpdateEventAdminRequest updateEventAdminRequest, Category category) {
         Event event = new Event();
         event.setAnnotation(updateEventAdminRequest.getAnnotation());
         event.setCategory(category);
@@ -57,7 +59,7 @@ public class EventMapper {
         return event;
     }
 
-    public Event toEvent(NewEventDto newEventDto, Category category, User initiator) {
+    public static Event toEvent(NewEventDto newEventDto, Category category, User initiator) {
         Event event = new Event();
         event.setAnnotation(newEventDto.getAnnotation());
         event.setCategory(category);
@@ -72,7 +74,7 @@ public class EventMapper {
         return event;
     }
 
-    public Event toEvent(UpdateEventUserRequest updateEventUserRequest, Category category) {
+    public static Event toEvent(UpdateEventUserRequest updateEventUserRequest, Category category) {
         Event event = new Event();
         event.setAnnotation(updateEventUserRequest.getAnnotation());
         event.setCategory(category);
