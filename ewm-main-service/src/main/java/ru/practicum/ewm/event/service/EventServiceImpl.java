@@ -45,7 +45,7 @@ import java.util.stream.Collectors;
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class EventServiceImpl implements AdminEventService, PublicEventService, UserEventService{
+public class EventServiceImpl implements AdminEventService, PublicEventService, UserEventService {
     private static final int UNLIMITED_PARTICIPATION_LIMIT = 0;
 
     private final EventRepository eventRepository;

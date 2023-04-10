@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 @Transactional
-public class ParticipationRequestServiceImpl implements ParticipationRequestService{
+public class ParticipationRequestServiceImpl implements ParticipationRequestService {
     private static final int UNLIMITED_PARTICIPATION_LIMIT = 0;
 
     private final ParticipationRequestRepository participationRequestRepository;
