@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.ewm.util.constant.DateFormat;
 import ru.practicum.ewm.util.parameters.AdminEventsParameters;
 import ru.practicum.ewm.state.State;
 import ru.practicum.ewm.event.model.dto.EventFullDto;
@@ -26,9 +27,9 @@ public class EventAdminController {
                                       @RequestParam(required = false) List<String> states,
                                       @RequestParam(required = false) List<Long> categories,
                                       @RequestParam(required = false)
-                                      @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime rangeStart,
+                                      @DateTimeFormat(pattern = DateFormat.PATTERN) LocalDateTime rangeStart,
                                       @RequestParam(required = false)
-                                      @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime rangeEnd,
+                                      @DateTimeFormat(pattern = DateFormat.PATTERN) LocalDateTime rangeEnd,
                                       @RequestParam(defaultValue = "0") Integer from,
                                       @RequestParam(defaultValue = "10") Integer size) {
         AdminEventsParameters parameters;

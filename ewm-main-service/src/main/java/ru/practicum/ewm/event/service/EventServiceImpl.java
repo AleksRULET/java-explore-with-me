@@ -12,6 +12,7 @@ import ru.practicum.ewm.error.exceptions.EventConditionNotMetException;
 import ru.practicum.ewm.error.exceptions.ParticipationRequestParticipantLimitViolationException;
 import ru.practicum.ewm.event.storage.EventRepository;
 import ru.practicum.ewm.request.model.RequestCounter;
+import ru.practicum.ewm.util.constant.UnlimitedParticipationLimit;
 import ru.practicum.ewm.util.parameters.AdminEventsParameters;
 import ru.practicum.ewm.util.parameters.PublicEventsParameters;
 import ru.practicum.ewm.util.validate.EventDateValidation;
@@ -46,7 +47,6 @@ import java.util.stream.Collectors;
 @Transactional
 @RequiredArgsConstructor
 public class EventServiceImpl implements AdminEventService, PublicEventService, UserEventService {
-    private static final int UNLIMITED_PARTICIPATION_LIMIT = 0;
 
     private final EventRepository eventRepository;
     private final UserRepository userRepository;
@@ -162,7 +162,7 @@ public class EventServiceImpl implements AdminEventService, PublicEventService, 
         EventDateValidation.validateEventUpdateAdmin(updatedEvent.getEventDate());
         if (updatedEvent.getState() == State.PUBLISHED
                 || (updatedEvent.getState() == State.PENDING
-                && (updatedEvent.getParticipantLimit().equals(UNLIMITED_PARTICIPATION_LIMIT)
+                && (updatedEvent.getParticipantLimit().equals(UnlimitedParticipationLimit.UNLIMITED_PARTICIPATION_LIMIT)
                 || !updatedEvent.getRequestModeration()))
         ) {
             LocalDateTime publishOn = LocalDateTime.now();
@@ -309,7 +309,7 @@ public class EventServiceImpl implements AdminEventService, PublicEventService, 
 
     private EventRequestStatusUpdateResult updateRequestStatusConfirm(Event event,
                                                                       List<ParticipationRequest> participationRequests) {
-        if (event.getParticipantLimit().equals(UNLIMITED_PARTICIPATION_LIMIT) || !event.getRequestModeration()) {
+        if (event.getParticipantLimit().equals(UnlimitedParticipationLimit.UNLIMITED_PARTICIPATION_LIMIT) || !event.getRequestModeration()) {
             List<ParticipationRequestDto> participationRequestDtos = participationRequests.stream()
                     .map(ParticipationRequestMapper::toParticipationRequestDto)
                     .collect(Collectors.toList());

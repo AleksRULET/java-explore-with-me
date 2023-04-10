@@ -8,6 +8,7 @@ import ru.practicum.ewm.event.model.dto.EventFullDto;
 import ru.practicum.ewm.event.model.dto.EventShortDto;
 import ru.practicum.ewm.event.service.PublicEventService;
 import ru.practicum.ewm.state.Sort;
+import ru.practicum.ewm.util.constant.DateFormat;
 import ru.practicum.ewm.util.parameters.PublicEventsParameters;
 
 import javax.servlet.http.HttpServletRequest;
@@ -27,9 +28,9 @@ public class PublicEventController {
                                        @RequestParam(required = false) List<Long> categories,
                                        @RequestParam(required = false) Boolean paid,
                                        @RequestParam(required = false)
-                                       @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime rangeStart,
+                                       @DateTimeFormat(pattern = DateFormat.PATTERN) LocalDateTime rangeStart,
                                        @RequestParam(required = false)
-                                       @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime rangeEnd,
+                                       @DateTimeFormat(pattern = DateFormat.PATTERN) LocalDateTime rangeEnd,
                                        @RequestParam(defaultValue = "false") Boolean onlyAvailable,
                                        @RequestParam(required = false) String sort,
                                        @RequestParam(defaultValue = "0") Integer from,
@@ -41,7 +42,7 @@ public class PublicEventController {
                     null);
         } else {
             Sort sortType = Sort.of(sort).orElseThrow(() -> new IllegalArgumentException(
-                    String.format("Failed to convert value '%s' of type String  to SortType", sort)));
+                    "Failed to convert  String  to Sort"));
             parameters = new PublicEventsParameters(text, categories, paid, rangeStart, rangeEnd, onlyAvailable,
                     sortType);
         }
