@@ -31,9 +31,6 @@ public class EventAdminController {
                                       @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime rangeEnd,
                                       @RequestParam(defaultValue = "0") Integer from,
                                       @RequestParam(defaultValue = "10") Integer size) {
-        log.info("GET : admin find all events with criteria users : {}, states : {}, " +
-                        "categories : {}, rangeStart : {}, rangeEnd : {}, from : {}, size : {}",
-                users, states, categories, rangeStart, rangeEnd, from, size);
         AdminEventsParameters parameters;
         if (states == null) {
             parameters = new AdminEventsParameters(users, null, categories, rangeStart, rangeEnd);
@@ -46,7 +43,6 @@ public class EventAdminController {
     @PatchMapping("/{eventId}")
     public EventFullDto update(@PathVariable Long eventId,
                                @RequestBody UpdateEventAdminRequest updateEventAdminRequest) {
-        log.info("PATCH : admin update event id : {} update value : {}", eventId, updateEventAdminRequest);
         return eventService.updateEvent(eventId, updateEventAdminRequest);
     }
 }
