@@ -1,22 +1,23 @@
 package ru.practicum.ewm.viewstats.service;
 
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.practicum.ewm.dto.ViewStatsDto;
 import ru.practicum.ewm.viewstats.model.ViewMapper;
 import ru.practicum.ewm.viewstats.storage.ViewStatsRepository;
 
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.stream.Collectors;
-
 @Service
 @AllArgsConstructor
 public class ViewStatsServiceImpl implements ViewStatsServis {
+
     private final ViewStatsRepository viewStatsRepository;
 
     @Override
-    public List<ViewStatsDto> findViewStats(LocalDateTime start, LocalDateTime end, List<String> uris, Boolean unique) {
+    public List<ViewStatsDto> findViewStats(LocalDateTime start, LocalDateTime end,
+            List<String> uris, Boolean unique) {
         if (unique) {
             if (uris == null) {
                 return viewStatsRepository.findUniqueViewStats(start, end).stream()
