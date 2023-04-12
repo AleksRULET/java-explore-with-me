@@ -5,9 +5,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import ru.practicum.ewm.event.model.Event;
 import ru.practicum.ewm.event.model.dto.EventShortResponseDto;
-import ru.practicum.ewm.user.model.User;
 import ru.practicum.ewm.user.model.dto.UserShortResponseDto;
 import ru.practicum.ewm.util.constant.DateFormat;
 
