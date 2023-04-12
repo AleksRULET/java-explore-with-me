@@ -74,7 +74,7 @@ public class CommentServiceImpl implements AdminCommentService, UserCommentServi
     @Override
     public List<CommentResponseDto> findAll(Long eventId, Integer from, Integer size) {
         Pageable pageable = PageRequestWithOffset.of(from, size);
-        List<Comment> comments = commentRepository.findAllById(eventId,  pageable).getContent();
+        List<Comment> comments = commentRepository.findByEventId(eventId,  pageable).getContent();
         return comments.stream()
                 .map(CommentMapper::commentResponseDto)
                 .collect(Collectors.toList());
