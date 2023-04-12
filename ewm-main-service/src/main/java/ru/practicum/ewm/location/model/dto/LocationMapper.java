@@ -13,8 +13,8 @@ public class LocationMapper {
 
     public static Location toLocation(LocationRequestDto locationRequestDto) {
         Location location = new Location();
-        location.setLon(locationRequestDto.getLat());
-        location.setLat(locationRequestDto.getLon());
+        location.setLat(locationRequestDto.getLat());
+        location.setLon(locationRequestDto.getLon());
         return location;
     }
 }
