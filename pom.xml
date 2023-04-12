@@ -115,6 +115,7 @@
               </goals>
               <id>jacoco-check</id>
             </execution>
+
             <execution>
               <goals>
                 <goal>report</goal>
