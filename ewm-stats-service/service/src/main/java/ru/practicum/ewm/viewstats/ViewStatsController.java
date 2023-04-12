@@ -1,5 +1,8 @@
 package ru.practicum.ewm.viewstats;
 
+import java.time.LocalDateTime;
+import java.util.List;
+import javax.validation.constraints.PastOrPresent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -9,10 +12,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import ru.practicum.ewm.dto.ViewStatsDto;
 import ru.practicum.ewm.viewstats.service.ViewStatsServis;
-
-import javax.validation.constraints.PastOrPresent;
-import java.time.LocalDateTime;
-import java.util.List;
 
 @RestController
 @Slf4j
