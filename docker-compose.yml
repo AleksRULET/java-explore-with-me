@@ -35,15 +35,16 @@ services:
     depends_on:
       - ewm-db
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://ewm-db:6542/ewm
-      - SPRING_DATASOURCE_USER=root
-      - SPRING_DATASOURCE_PASSWORD=root
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://ewm-db:5432/ewm
+      - POSTGRES_USER=docker
+      - POSTGRES_PASSWORD=docker
+      - STAT-SERVER_URL=http://stats-server:9090
 
   ewm-db:
     image: postgres:14-alpine
     ports:
-      - "6542:6542"
+      - "6542:5432"
     environment:
-      - POSTGRES_USER=root
-      - POSTGRES_PASSWORD=root
+      - POSTGRES_USER=docker
+      - POSTGRES_PASSWORD=docker
       - POSTGRES_DB=ewm
