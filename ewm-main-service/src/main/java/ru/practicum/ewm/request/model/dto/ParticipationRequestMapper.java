@@ -6,13 +6,14 @@ import ru.practicum.ewm.request.model.ParticipationRequest;
 @Component
 public class ParticipationRequestMapper {
 
-    public static ParticipationRequestDto toParticipationRequestDto(ParticipationRequest participationRequest) {
-        ParticipationRequestDto participationRequestDto = new ParticipationRequestDto();
-        participationRequestDto.setId(participationRequest.getId());
-        participationRequestDto.setCreated(participationRequest.getCreated());
-        participationRequestDto.setEvent(participationRequest.getEvent().getId());
-        participationRequestDto.setRequester(participationRequest.getRequester().getId());
-        participationRequestDto.setStatus(participationRequest.getStatus());
-        return participationRequestDto;
+    public static ParticipationRequestResponseDto toParticipationRequestDto(
+            ParticipationRequest participationRequest) {
+        ParticipationRequestResponseDto participationRequestResponseDto = new ParticipationRequestResponseDto();
+        participationRequestResponseDto.setId(participationRequest.getId());
+        participationRequestResponseDto.setCreated(participationRequest.getCreated());
+        participationRequestResponseDto.setEvent(participationRequest.getEvent().getId());
+        participationRequestResponseDto.setRequester(participationRequest.getRequester().getId());
+        participationRequestResponseDto.setStatus(participationRequest.getStatus());
+        return participationRequestResponseDto;
     }
 }

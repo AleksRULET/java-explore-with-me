@@ -1,5 +1,7 @@
 package ru.practicum.ewm.request.storage;
 
+import java.util.List;
+import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -9,10 +11,8 @@ import ru.practicum.ewm.request.model.RequestCounter;
 import ru.practicum.ewm.state.Status;
 import ru.practicum.ewm.user.model.User;
 
-import java.util.List;
-import java.util.Optional;
-
 public interface ParticipationRequestRepository extends JpaRepository<ParticipationRequest, Long> {
+
     @Query("select pr " +
             "from ParticipationRequest pr " +
             "JOIN FETCH pr.event " +
@@ -37,7 +37,7 @@ public interface ParticipationRequestRepository extends JpaRepository<Participat
             "JOIN FETCH pr.requester " +
             "where pr.event.id = :eventId and pr.id in :requestIds")
     List<ParticipationRequest> findAllWithEventAndRequester(@Param("eventId") Long eventId,
-                                                            @Param("requestIds") List<Long> requestIds);
+            @Param("requestIds") List<Long> requestIds);
 
     @Query("select pr " +
             "from ParticipationRequest pr " +
@@ -45,7 +45,7 @@ public interface ParticipationRequestRepository extends JpaRepository<Participat
             "JOIN FETCH pr.requester " +
             "where pr.event.id = :eventId and pr.status in :statuses")
     List<ParticipationRequest> findAllByEventAndStatusesFetch(@Param("eventId") Long eventId,
-                                                              @Param("statuses") List<Status> statuses);
+            @Param("statuses") List<Status> statuses);
 
     @Query("select new ru.practicum.ewm.request.model.RequestCounter(pr.event.id, count(pr)) " +
             "from ParticipationRequest pr " +
@@ -53,7 +53,7 @@ public interface ParticipationRequestRepository extends JpaRepository<Participat
             "and pr.status in :statuses " +
             "group by pr.event.id")
     List<RequestCounter> countRequestsForEvents(@Param("eventIds") List<Long> eventId,
-                                                @Param("statuses") List<Status> statuses);
+            @Param("statuses") List<Status> statuses);
 
     List<ParticipationRequest> findByRequesterAndEvent(User requester, Event event);
 }

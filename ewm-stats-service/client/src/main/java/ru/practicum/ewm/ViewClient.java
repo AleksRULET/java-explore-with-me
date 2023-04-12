@@ -1,14 +1,13 @@
 package ru.practicum.ewm;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.util.annotation.Nullable;
 import ru.practicum.ewm.dto.ViewStatsDto;
-
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.List;
 
 public class ViewClient extends BaseClient {
 
@@ -22,7 +21,8 @@ public class ViewClient extends BaseClient {
         );
     }
 
-    public List<ViewStatsDto> get(LocalDateTime start, LocalDateTime end, @Nullable List<String> uris, @Nullable Boolean uniqueIp) {
+    public List<ViewStatsDto> get(LocalDateTime start, LocalDateTime end,
+            @Nullable List<String> uris, @Nullable Boolean uniqueIp) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_PATTERN);
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("start", start.format(formatter));

@@ -3,17 +3,18 @@ package ru.practicum.ewm.location.model.dto;
 import ru.practicum.ewm.location.model.Location;
 
 public class LocationMapper {
-    public static LocationDto toLocationDto(Location location) {
-        LocationDto locationDto = new LocationDto();
-        locationDto.setLat(location.getLat());
-        locationDto.setLon(location.getLon());
-        return locationDto;
+
+    public static LocationRequestDto toLocationDto(Location location) {
+        LocationRequestDto locationRequestDto = new LocationRequestDto();
+        locationRequestDto.setLat(location.getLat());
+        locationRequestDto.setLon(location.getLon());
+        return locationRequestDto;
     }
 
-    public static Location toLocation(LocationDto locationDto) {
+    public static Location toLocation(LocationRequestDto locationRequestDto) {
         Location location = new Location();
-        location.setLat(locationDto.getLat());
-        location.setLon(locationDto.getLon());
+        location.setLon(locationRequestDto.getLat());
+        location.setLat(locationRequestDto.getLon());
         return location;
     }
 }

@@ -1,24 +1,27 @@
-<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns="http://maven.apache.org/POM/4.0.0"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
-    <parent>
-        <artifactId>explore-with-me</artifactId>
-        <groupId>ru.practicum</groupId>
-        <version>0.0.1-SNAPSHOT</version>
-    </parent>
+  <artifactId>ewm-stats-service</artifactId>
 
-    <modelVersion>4.0.0</modelVersion>
-    <artifactId>ewm-stats-service</artifactId>
-    <name>ewm-stats-service</name>
-    <packaging>pom</packaging>
+  <dependencies>
+    <dependency>
+      <artifactId>spring-boot-starter-actuator</artifactId>
+      <groupId>org.springframework.boot</groupId>
+    </dependency>
+  </dependencies>
+  <modelVersion>4.0.0</modelVersion>
+  <modules>
+    <module>service</module>
+    <module>client</module>
+    <module>dto</module>
+  </modules>
+  <name>ewm-stats-service</name>
 
-    <modules>
-        <module>service</module>
-        <module>client</module>
-        <module>dto</module>
-    </modules>
-    <dependencies><dependency>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-actuator</artifactId>
-    </dependency></dependencies>
+  <packaging>pom</packaging>
+  <parent>
+    <artifactId>explore-with-me</artifactId>
+    <groupId>ru.practicum</groupId>
+    <version>0.0.1-SNAPSHOT</version>
+  </parent>
 </project>

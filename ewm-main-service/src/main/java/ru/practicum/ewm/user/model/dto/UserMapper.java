@@ -6,25 +6,25 @@ import ru.practicum.ewm.user.model.User;
 @Component
 public class UserMapper {
 
-    public static UserDto toUserDto(User user) {
-        UserDto userDto = new UserDto();
-        userDto.setEmail(user.getEmail());
-        userDto.setId(user.getId());
-        userDto.setName(user.getName());
-        return userDto;
+    public static UserResponseDto toUserDto(User user) {
+        UserResponseDto userResponseDto = new UserResponseDto();
+        userResponseDto.setEmail(user.getEmail());
+        userResponseDto.setId(user.getId());
+        userResponseDto.setName(user.getName());
+        return userResponseDto;
     }
 
-    public static UserShortDto toUserShortDto(User user) {
-        UserShortDto userShortDto = new UserShortDto();
-        userShortDto.setId(user.getId());
-        userShortDto.setName(user.getName());
-        return userShortDto;
+    public static UserShortResponseDto toUserShortDto(User user) {
+        UserShortResponseDto userShortResponseDto = new UserShortResponseDto();
+        userShortResponseDto.setId(user.getId());
+        userShortResponseDto.setName(user.getName());
+        return userShortResponseDto;
     }
 
-    public static User toUser(NewUserRequest newUserRequest) {
+    public static User toUser(UserRequestDto userRequestDto) {
         User user = new User();
-        user.setEmail(newUserRequest.getEmail());
-        user.setName(newUserRequest.getName());
+        user.setEmail(userRequestDto.getEmail());
+        user.setName(userRequestDto.getName());
         return user;
     }
 }

@@ -1,4 +1,4 @@
-package ru.practicum.ewm.user.model.dto;
+package ru.practicum.ewm.category.model.dto;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -7,9 +7,10 @@ import lombok.ToString;
 
 @Getter
 @Setter
-@ToString
 @EqualsAndHashCode
-public class UserShortDto {
+@ToString
+public class CategoryResponseDto {
+
     private Long id;
     private String name;
 }

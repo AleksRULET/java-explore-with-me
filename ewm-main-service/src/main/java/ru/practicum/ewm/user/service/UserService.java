@@ -1,15 +1,14 @@
 package ru.practicum.ewm.user.service;
 
-import ru.practicum.ewm.user.model.dto.NewUserRequest;
-import ru.practicum.ewm.user.model.dto.UserDto;
-
 import java.util.List;
+import ru.practicum.ewm.user.model.dto.UserRequestDto;
+import ru.practicum.ewm.user.model.dto.UserResponseDto;
 
 public interface UserService {
 
-    List<UserDto> findUsers(List<Long> userId, int from, int size);
+    List<UserResponseDto> findUsers(List<Long> userId, int from, int size);
 
-    UserDto add(NewUserRequest newUserRequest);
+    UserResponseDto add(UserRequestDto userRequestDto);
 
     void remove(Long userId);
 }

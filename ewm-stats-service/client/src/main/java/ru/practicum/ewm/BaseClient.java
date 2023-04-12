@@ -1,13 +1,12 @@
 package ru.practicum.ewm;
 
+import java.util.List;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.MediaType;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
 import ru.practicum.ewm.dto.ViewStatsDto;
-
-import java.util.List;
 
 public class BaseClient {
 

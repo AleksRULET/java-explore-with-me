@@ -1,12 +1,18 @@
 package ru.practicum.ewm.request;
 
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.*;
-import ru.practicum.ewm.request.model.dto.ParticipationRequestDto;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
+import ru.practicum.ewm.request.model.dto.ParticipationRequestResponseDto;
 import ru.practicum.ewm.request.service.ParticipationRequestService;
-
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -16,20 +22,20 @@ public class ParticipationRequestController {
     private final ParticipationRequestService participationRequestService;
 
     @GetMapping
-    public List<ParticipationRequestDto> getAll(@PathVariable Long userId) {
+    public List<ParticipationRequestResponseDto> getAll(@PathVariable Long userId) {
         return participationRequestService.findParticipationRequests(userId);
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ParticipationRequestDto createParticipationRequest(@PathVariable Long userId,
-                                                              @RequestParam Long eventId) {
+    public ParticipationRequestResponseDto createParticipationRequest(@PathVariable Long userId,
+            @RequestParam Long eventId) {
         return participationRequestService.addParticipationRequest(userId, eventId);
     }
 
     @PatchMapping("/{requestId}/cancel")
-    public ParticipationRequestDto cancelParticipationRequest(@PathVariable Long userId,
-                                                              @PathVariable Long requestId) {
+    public ParticipationRequestResponseDto cancelParticipationRequest(@PathVariable Long userId,
+            @PathVariable Long requestId) {
         return participationRequestService.cancelParticipationRequest(userId, requestId);
     }
 }

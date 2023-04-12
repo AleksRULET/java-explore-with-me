@@ -1,21 +1,21 @@
 package ru.practicum.ewm.event.model.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import java.time.LocalDateTime;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import ru.practicum.ewm.location.model.dto.LocationDto;
-
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import java.time.LocalDateTime;
+import ru.practicum.ewm.location.model.dto.LocationRequestDto;
 
 @Getter
 @Setter
 @EqualsAndHashCode
 @ToString
-public class NewEventDto {
+public class EventRequestDto {
+
     @NotBlank
     private String annotation;
     @NotNull
@@ -26,7 +26,7 @@ public class NewEventDto {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime eventDate;
     @NotNull
-    private LocationDto location;
+    private LocationRequestDto location;
     private Boolean paid;
     private Integer participantLimit;
     private Boolean requestModeration;

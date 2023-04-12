@@ -1,15 +1,15 @@
 package ru.practicum.ewm.event.storage;
 
-import ru.practicum.ewm.event.model.Event;
-import ru.practicum.ewm.state.State;
-
+import java.time.LocalDateTime;
+import java.util.List;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-import java.time.LocalDateTime;
-import java.util.List;
+import ru.practicum.ewm.event.model.Event;
+import ru.practicum.ewm.state.State;
 
 public class Predicates {
+
     public static Predicate hasInitiatorIn(Root<Event> root, List<Long> users) {
         return root.get("initiator").get("id").in(users);
     }
@@ -22,11 +22,13 @@ public class Predicates {
         return root.get("category").get("id").in(categories);
     }
 
-    public static Predicate hasRangeStart(Root<Event> root, CriteriaBuilder cb, LocalDateTime rangeStart) {
+    public static Predicate hasRangeStart(Root<Event> root, CriteriaBuilder cb,
+            LocalDateTime rangeStart) {
         return cb.greaterThanOrEqualTo(root.get("eventDate"), rangeStart);
     }
 
-    public static Predicate hasRangeEnd(Root<Event> root, CriteriaBuilder cb, LocalDateTime rangeEnd) {
+    public static Predicate hasRangeEnd(Root<Event> root, CriteriaBuilder cb,
+            LocalDateTime rangeEnd) {
         return cb.lessThanOrEqualTo(root.get("eventDate"), rangeEnd);
     }
 

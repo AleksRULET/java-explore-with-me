@@ -1,21 +1,28 @@
 package ru.practicum.ewm.user.model;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
-
-import javax.persistence.*;
 
 @Entity
 @Table(name = "users")
 @Getter
 @Setter
 public class User {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "user_id")
+    @Column(name = "id")
     private Long id;
+
     @Column(name = "email")
     private String email;
-    @Column(name = "user_name", nullable = false)
+
+    @Column(name = "name", nullable = false)
     private String name;
 }

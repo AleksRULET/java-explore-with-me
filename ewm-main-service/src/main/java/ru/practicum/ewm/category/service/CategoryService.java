@@ -1,19 +1,18 @@
 package ru.practicum.ewm.category.service;
 
-import ru.practicum.ewm.category.model.dto.CategoryDto;
-import ru.practicum.ewm.category.model.dto.NewCategoryDto;
-
 import java.util.List;
+import ru.practicum.ewm.category.model.dto.CategoryResponseDto;
+import ru.practicum.ewm.category.model.dto.CategoryRequestDto;
 
 public interface CategoryService {
 
-    CategoryDto findCategory(Long id);
+    CategoryResponseDto findCategory(Long id);
 
-    List<CategoryDto> findAllCategories(int from, int size);
+    List<CategoryResponseDto> findAllCategories(int from, int size);
 
-    CategoryDto addCategory(NewCategoryDto newCategoryDto);
+    CategoryResponseDto addCategory(CategoryRequestDto categoryRequestDto);
 
-    CategoryDto editCategory(Long id, NewCategoryDto newCategoryDto);
+    CategoryResponseDto editCategory(Long id, CategoryRequestDto categoryRequestDto);
 
     void removeCategory(Long id);
 

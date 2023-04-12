@@ -1,20 +1,20 @@
 package ru.practicum.ewm.compilation.model.dto;
 
+import java.util.Set;
+import javax.validation.constraints.NotBlank;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import ru.practicum.ewm.event.model.Event;
-
-import java.util.Set;
 
 @Getter
 @Setter
 @EqualsAndHashCode
 @ToString
-public class CompilationDto {
-    private Long id;
-    private Set<Event> events;
-    private Boolean pinned;
+public class CompilationRequestDto {
+
+    private Set<Long> events;
+    private boolean pinned;
+    @NotBlank
     private String title;
 }

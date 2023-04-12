@@ -1,18 +1,17 @@
 package ru.practicum.ewm.client;
 
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
-import ru.practicum.ewm.ViewClient;
-import ru.practicum.client.hit.HitClient;
-import ru.practicum.ewm.dto.HitDto;
-import ru.practicum.ewm.dto.ViewStatsDto;
-import ru.practicum.ewm.event.model.Event;
-
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+import ru.practicum.client.hit.HitClient;
+import ru.practicum.ewm.ViewClient;
+import ru.practicum.ewm.dto.HitDto;
+import ru.practicum.ewm.dto.ViewStatsDto;
+import ru.practicum.ewm.event.model.Event;
 
 @Slf4j
 @Component
@@ -38,11 +37,13 @@ public class Client {
         hitClient.post(hit);
     }
 
-    public List<ViewStatsDto> getViews(List<String> uri, LocalDateTime rangeStart, LocalDateTime rangeEnd) {
+    public List<ViewStatsDto> getViews(List<String> uri, LocalDateTime rangeStart,
+            LocalDateTime rangeEnd) {
         return viewClient.get(rangeStart, rangeEnd, uri);
     }
 
-    public Map<Long, Long> getHits(List<Event> events, LocalDateTime rangeStart, LocalDateTime rangeEnd) {
+    public Map<Long, Long> getHits(List<Event> events, LocalDateTime rangeStart,
+            LocalDateTime rangeEnd) {
         if (rangeStart == null) {
             rangeStart = LocalDateTime.now().minusYears(DELTA_YEARS_FOR_INTERVAL);
         }

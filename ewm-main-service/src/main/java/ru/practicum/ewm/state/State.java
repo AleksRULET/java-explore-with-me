@@ -44,7 +44,9 @@ public enum State {
         return strings.stream()
                 .map(str -> of(str).orElseThrow(
                         () -> new IllegalArgumentException(
-                                String.format("Failed to convert value '%s' of type String  to State", str))))
+                                String.format(
+                                        "Failed to convert value '%s' of type String  to State",
+                                        str))))
                 .collect(Collectors.toList());
     }
 }

@@ -1,12 +1,11 @@
 package ru.practicum.ewm.compilation.service;
 
-import ru.practicum.ewm.compilation.model.dto.CompilationDto;
-
 import java.util.List;
+import ru.practicum.ewm.compilation.model.dto.CompilationResponseDto;
 
 public interface PublicCompilationService {
 
-    List<CompilationDto> findPinned(Boolean pinned, int from, int size);
+    List<CompilationResponseDto> findPinned(Boolean pinned, int from, int size);
 
-    CompilationDto findCompilation(Long id);
+    CompilationResponseDto findCompilation(Long id);
 }

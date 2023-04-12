@@ -1,5 +1,14 @@
 package ru.practicum.ewm.event.service;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -7,41 +16,38 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.ewm.category.model.Category;
 import ru.practicum.ewm.category.storage.CategoryRepository;
-import ru.practicum.ewm.error.exceptions.*;
+import ru.practicum.ewm.client.Client;
+import ru.practicum.ewm.error.exceptions.EntityNotFoundException;
 import ru.practicum.ewm.error.exceptions.EventConditionNotMetException;
 import ru.practicum.ewm.error.exceptions.ParticipationRequestParticipantLimitViolationException;
+import ru.practicum.ewm.event.model.Event;
+import ru.practicum.ewm.event.model.dto.EventFullResponseDto;
+import ru.practicum.ewm.event.model.dto.EventMapper;
+import ru.practicum.ewm.event.model.dto.EventRequestStatusUpdateRequest;
+import ru.practicum.ewm.event.model.dto.EventRequestStatusUpdateResult;
+import ru.practicum.ewm.event.model.dto.EventShortResponseDto;
+import ru.practicum.ewm.event.model.dto.EventRequestDto;
+import ru.practicum.ewm.event.model.dto.UpdateEventAdminRequest;
+import ru.practicum.ewm.event.model.dto.UpdateEventUserRequest;
 import ru.practicum.ewm.event.storage.EventRepository;
+import ru.practicum.ewm.event.storage.Predicates;
+import ru.practicum.ewm.request.model.ParticipationRequest;
 import ru.practicum.ewm.request.model.RequestCounter;
+import ru.practicum.ewm.request.model.dto.ParticipationRequestResponseDto;
+import ru.practicum.ewm.request.model.dto.ParticipationRequestMapper;
+import ru.practicum.ewm.request.storage.ParticipationRequestRepository;
+import ru.practicum.ewm.state.State;
+import ru.practicum.ewm.state.Status;
+import ru.practicum.ewm.state.UpdateStatus;
+import ru.practicum.ewm.user.model.User;
+import ru.practicum.ewm.user.storage.UserRepository;
+import ru.practicum.ewm.util.JsonPatch;
+import ru.practicum.ewm.util.PageRequestWithOffset;
 import ru.practicum.ewm.util.constant.UnlimitedParticipationLimit;
 import ru.practicum.ewm.util.parameters.AdminEventsParameters;
 import ru.practicum.ewm.util.parameters.PublicEventsParameters;
 import ru.practicum.ewm.util.validate.EventDateValidation;
 import ru.practicum.ewm.util.validate.StateValidation;
-import ru.practicum.ewm.event.model.Event;
-import ru.practicum.ewm.state.State;
-import ru.practicum.ewm.event.model.dto.*;
-import ru.practicum.ewm.state.UpdateStatus;
-import ru.practicum.ewm.event.storage.Predicates;
-import ru.practicum.ewm.request.model.ParticipationRequest;
-import ru.practicum.ewm.state.Status;
-import ru.practicum.ewm.request.model.dto.ParticipationRequestDto;
-import ru.practicum.ewm.request.model.dto.ParticipationRequestMapper;
-import ru.practicum.ewm.request.storage.ParticipationRequestRepository;
-import ru.practicum.ewm.client.Client;
-import ru.practicum.ewm.user.model.User;
-import ru.practicum.ewm.user.storage.UserRepository;
-import ru.practicum.ewm.util.JsonPatch;
-import ru.practicum.ewm.util.PageRequestWithOffset;
-
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -57,13 +63,14 @@ public class EventServiceImpl implements AdminEventService, PublicEventService, 
 
     @Transactional
     @Override
-    public EventFullDto add(Long userId, NewEventDto newEventDto) {
+    public EventFullResponseDto add(Long userId, EventRequestDto eventRequestDto) {
         User initiator = userRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException("User not found"));
-        Category category = categoryRepository.findById(newEventDto.getCategory())
+        Category category = categoryRepository.findById(eventRequestDto.getCategory())
                 .orElseThrow(() -> new EntityNotFoundException(
-                        String.format("Category with id=%s was not found", newEventDto.getCategory())));
-        Event event = EventMapper.toEvent(newEventDto, category, initiator);
+                        String.format("Category with id=%s was not found",
+                                eventRequestDto.getCategory())));
+        Event event = EventMapper.toEvent(eventRequestDto, category, initiator);
         event.setState(State.PENDING);
         event.setCreatedOn(LocalDateTime.now());
         Event createdEvent = eventRepository.save(event);
@@ -71,7 +78,7 @@ public class EventServiceImpl implements AdminEventService, PublicEventService, 
     }
 
     @Override
-    public List<EventShortDto> findEvents(Long userId, int from, int size) {
+    public List<EventShortResponseDto> findEvents(Long userId, int from, int size) {
         userRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException("User not found"));
         Pageable pageable = PageRequestWithOffset.of(from, size);
@@ -82,7 +89,7 @@ public class EventServiceImpl implements AdminEventService, PublicEventService, 
     }
 
     @Override
-    public EventFullDto findEvent(Long userId, Long eventId) {
+    public EventFullResponseDto findEvent(Long userId, Long eventId) {
         userRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException("User not found"));
         Event event = eventRepository.findWithCategoryAndInitiator(userId, eventId)
@@ -92,11 +99,14 @@ public class EventServiceImpl implements AdminEventService, PublicEventService, 
 
     @Transactional
     @Override
-    public EventFullDto updateEvent(Long userId, Long eventId, UpdateEventUserRequest updateEventUserRequest) {
+    public EventFullResponseDto updateEvent(Long userId, Long eventId,
+            UpdateEventUserRequest updateEventUserRequest) {
         userRepository.findById(userId)
-                .orElseThrow(() -> new EntityNotFoundException(String.format("User with id=%s was not found", userId)));
+                .orElseThrow(() -> new EntityNotFoundException(
+                        String.format("User with id=%s was not found", userId)));
         Event event = eventRepository.findWithCategoryAndInitiator(userId, eventId)
-                .orElseThrow(() -> new EntityNotFoundException(String.format("Event with id=%s was not found", eventId)));
+                .orElseThrow(() -> new EntityNotFoundException(
+                        String.format("Event with id=%s was not found", eventId)));
         StateValidation.validateEventUpdateUser(event.getState());
         Long categoryId = updateEventUserRequest.getCategory();
         Category category = categoryId == null ? null : categoryRepository.findById(categoryId)
@@ -109,25 +119,29 @@ public class EventServiceImpl implements AdminEventService, PublicEventService, 
     }
 
     @Override
-    public List<EventFullDto> findEvents(AdminEventsParameters parameters, Integer from, Integer size) {
+    public List<EventFullResponseDto> findEvents(AdminEventsParameters parameters, Integer from,
+            Integer size) {
         Pageable pageable = PageRequestWithOffset.of(from, size);
         List<Event> events = eventRepository.findAll((event, query, builder) -> {
             event.fetch("initiator");
             event.fetch("category");
-            return builder.and(getFiltersAdminEvents(parameters, event, builder).toArray(new Predicate[]{}));
+            return builder.and(
+                    getFiltersAdminEvents(parameters, event, builder).toArray(new Predicate[]{}));
         }, pageable).getContent();
-        List<EventFullDto> eventFullDtos = events.stream()
+        List<EventFullResponseDto> eventFullResponseDtos = events.stream()
                 .map(EventMapper::toEventFullDto)
                 .collect(Collectors.toList());
-        Map<Long, Long> eventHits = client.getHits(events, parameters.getRangeStart(), parameters.getRangeEnd());
-        eventFullDtos.forEach(ent -> ent.setViews(eventHits.getOrDefault(ent.getId(), 0L)));
+        Map<Long, Long> eventHits = client.getHits(events, parameters.getRangeStart(),
+                parameters.getRangeEnd());
+        eventFullResponseDtos.forEach(ent -> ent.setViews(eventHits.getOrDefault(ent.getId(), 0L)));
         Map<Long, Long> eventConfReq = getConfirmedRequestsCount(events);
-        eventFullDtos.forEach(ent -> ent.setConfirmedRequests(eventConfReq.getOrDefault(ent.getId(), 0L)));
-        return eventFullDtos;
+        eventFullResponseDtos.forEach(
+                ent -> ent.setConfirmedRequests(eventConfReq.getOrDefault(ent.getId(), 0L)));
+        return eventFullResponseDtos;
     }
 
     private List<Predicate> getFiltersAdminEvents(AdminEventsParameters parameters,
-                                                  Root<Event> root, CriteriaBuilder builder) {
+            Root<Event> root, CriteriaBuilder builder) {
         List<Predicate> predicates = new ArrayList<>();
         if (parameters.getUsers() != null) {
             predicates.add(Predicates.hasInitiatorIn(root, parameters.getUsers()));
@@ -149,7 +163,7 @@ public class EventServiceImpl implements AdminEventService, PublicEventService, 
 
     @Transactional
     @Override
-    public EventFullDto updateEvent(Long eventId, UpdateEventAdminRequest updateEventAdminRequest) {
+    public EventFullResponseDto updateEvent(Long eventId, UpdateEventAdminRequest updateEventAdminRequest) {
         Event event = eventRepository.findWithCategoryAndInitiator(eventId)
                 .orElseThrow(() -> new EntityNotFoundException("Event not found"));
         Long categoryId = updateEventAdminRequest.getCategory();
@@ -161,7 +175,8 @@ public class EventServiceImpl implements AdminEventService, PublicEventService, 
         EventDateValidation.validateEventUpdateAdmin(updatedEvent.getEventDate());
         if (updatedEvent.getState() == State.PUBLISHED
                 || (updatedEvent.getState() == State.PENDING
-                && (updatedEvent.getParticipantLimit().equals(UnlimitedParticipationLimit.UNLIMITED_PARTICIPATION_LIMIT)
+                && (updatedEvent.getParticipantLimit()
+                .equals(UnlimitedParticipationLimit.UNLIMITED_PARTICIPATION_LIMIT)
                 || !updatedEvent.getRequestModeration()))
         ) {
             LocalDateTime publishOn = LocalDateTime.now();
@@ -173,7 +188,8 @@ public class EventServiceImpl implements AdminEventService, PublicEventService, 
     }
 
     @Override
-    public List<EventShortDto> getEvents(PublicEventsParameters parameters, Integer from, Integer size) {
+    public List<EventShortResponseDto> getEvents(PublicEventsParameters parameters, Integer from,
+            Integer size) {
         if (parameters.getSortType() == null) {
             return getEventsUnsorted(parameters, from, size);
         } else if (parameters.getSortType() == ru.practicum.ewm.state.Sort.EVENT_DATE) {
@@ -183,25 +199,29 @@ public class EventServiceImpl implements AdminEventService, PublicEventService, 
         }
     }
 
-    private List<EventShortDto> getEvents(PublicEventsParameters parameters, Pageable pageable) {
+    private List<EventShortResponseDto> getEvents(PublicEventsParameters parameters, Pageable pageable) {
         List<Event> events = eventRepository.findAll((event, query, builder) -> {
             event.fetch("initiator");
             event.fetch("category");
-            return builder.and(getFiltersPublicEvents(parameters, event, builder).toArray(new Predicate[]{}));
+            return builder.and(
+                    getFiltersPublicEvents(parameters, event, builder).toArray(new Predicate[]{}));
         }, pageable).getContent();
-        Map<Long, Long> eventHits = client.getHits(events, parameters.getRangeStart(), parameters.getRangeEnd());
-        List<EventShortDto> eventShortDtos = events.stream()
+        Map<Long, Long> eventHits = client.getHits(events, parameters.getRangeStart(),
+                parameters.getRangeEnd());
+        List<EventShortResponseDto> eventShortResponseDtos = events.stream()
                 .map(EventMapper::toEventShortDto)
                 .collect(Collectors.toList());
-        eventShortDtos.forEach(ent -> ent.setViews(eventHits.getOrDefault(ent.getId(), 0L)));
+        eventShortResponseDtos.forEach(ent -> ent.setViews(eventHits.getOrDefault(ent.getId(), 0L)));
         Map<Long, Long> eventConfReq = getConfirmedRequestsCount(events);
-        eventShortDtos.forEach(ent -> ent.setConfirmedRequests(eventConfReq.getOrDefault(ent.getId(), 0L)));
+        eventShortResponseDtos.forEach(
+                ent -> ent.setConfirmedRequests(eventConfReq.getOrDefault(ent.getId(), 0L)));
         if (parameters.getOnlyAvailable()) {
-            eventShortDtos = eventShortDtos.stream()
-                    .filter(ent -> ent.getConfirmedRequests().equals(ent.getParticipantLimit().longValue()))
+            eventShortResponseDtos = eventShortResponseDtos.stream()
+                    .filter(ent -> ent.getConfirmedRequests()
+                            .equals(ent.getParticipantLimit().longValue()))
                     .collect(Collectors.toList());
         }
-        return eventShortDtos;
+        return eventShortResponseDtos;
     }
 
     private Map<Long, Long> getConfirmedRequestsCount(List<Event> events) {
@@ -215,27 +235,30 @@ public class EventServiceImpl implements AdminEventService, PublicEventService, 
                         (existing, replacement) -> existing));
     }
 
-    private List<EventShortDto> getEventsUnsorted(PublicEventsParameters parameters, Integer from, Integer size) {
+    private List<EventShortResponseDto> getEventsUnsorted(PublicEventsParameters parameters, Integer from,
+            Integer size) {
         Pageable pageable = PageRequestWithOffset.of(from, size);
         return getEvents(parameters, pageable);
     }
 
-    private List<EventShortDto> getEventsSortedEventDate(PublicEventsParameters parameters, Integer from, Integer size) {
+    private List<EventShortResponseDto> getEventsSortedEventDate(PublicEventsParameters parameters,
+            Integer from, Integer size) {
         Sort sort = Sort.by(Sort.Direction.ASC, "eventDate");
         Pageable pageable = PageRequestWithOffset.of(from, size, sort);
         return getEvents(parameters, pageable);
     }
 
-    private List<EventShortDto> getEventsSortedViews(PublicEventsParameters parameters, Integer from, Integer size) {
+    private List<EventShortResponseDto> getEventsSortedViews(PublicEventsParameters parameters,
+            Integer from, Integer size) {
         Pageable pageable = PageRequestWithOffset.of(from, size);
-        List<EventShortDto> events = getEvents(parameters, pageable);
+        List<EventShortResponseDto> events = getEvents(parameters, pageable);
         return events.stream()
-                .sorted(Comparator.comparing(EventShortDto::getViews))
+                .sorted(Comparator.comparing(EventShortResponseDto::getViews))
                 .collect(Collectors.toList());
     }
 
     private List<Predicate> getFiltersPublicEvents(PublicEventsParameters parameters,
-                                                   Root<Event> root, CriteriaBuilder builder) {
+            Root<Event> root, CriteriaBuilder builder) {
         List<Predicate> predicates = new ArrayList<>();
         predicates.add(Predicates.hasStatusPublished(root, builder));
         if (parameters.getText() != null) {
@@ -259,17 +282,18 @@ public class EventServiceImpl implements AdminEventService, PublicEventService, 
     }
 
     @Override
-    public EventFullDto getEvent(Long eventId) {
+    public EventFullResponseDto getEvent(Long eventId) {
         Event event = eventRepository.findOne((eventRoot, query, builder) -> {
             eventRoot.fetch("initiator");
             eventRoot.fetch("category");
             return builder.and(Predicates.hasStatusPublished(eventRoot, builder),
                     Predicates.hasEventId(eventRoot, builder, eventId));
-        }).orElseThrow(() -> new EntityNotFoundException(String.format("Event with id=%s was not found", eventId)));
-        EventFullDto eventFullDto = EventMapper.toEventFullDto(event);
-        eventFullDto.setViews(client.getHit(eventFullDto.getId()));
-        eventFullDto.setConfirmedRequests(getConfirmedRequestsCount(event));
-        return eventFullDto;
+        }).orElseThrow(() -> new EntityNotFoundException(
+                String.format("Event with id=%s was not found", eventId)));
+        EventFullResponseDto eventFullResponseDto = EventMapper.toEventFullDto(event);
+        eventFullResponseDto.setViews(client.getHit(eventFullResponseDto.getId()));
+        eventFullResponseDto.setConfirmedRequests(getConfirmedRequestsCount(event));
+        return eventFullResponseDto;
     }
 
     private Long getConfirmedRequestsCount(Event event) {
@@ -278,12 +302,15 @@ public class EventServiceImpl implements AdminEventService, PublicEventService, 
     }
 
     @Override
-    public List<ParticipationRequestDto> getParticipationRequests(Long userId, Long eventId) {
+    public List<ParticipationRequestResponseDto> getParticipationRequests(Long userId, Long eventId) {
         userRepository.findById(userId)
-                .orElseThrow(() -> new EntityNotFoundException(String.format("User with id=%s was not found", userId)));
+                .orElseThrow(() -> new EntityNotFoundException(
+                        String.format("User with id=%s was not found", userId)));
         eventRepository.findWithCategoryAndInitiator(userId, eventId)
-                .orElseThrow(() -> new EntityNotFoundException(String.format("Event with id=%s was not found", eventId)));
-        List<ParticipationRequest> participationRequests = participationRequestRepository.findAllWithEvent(eventId);
+                .orElseThrow(() -> new EntityNotFoundException(
+                        String.format("Event with id=%s was not found", eventId)));
+        List<ParticipationRequest> participationRequests = participationRequestRepository.findAllWithEvent(
+                eventId);
         return participationRequests.stream()
                 .map(ParticipationRequestMapper::toParticipationRequestDto)
                 .collect(Collectors.toList());
@@ -292,11 +319,13 @@ public class EventServiceImpl implements AdminEventService, PublicEventService, 
     @Transactional
     @Override
     public EventRequestStatusUpdateResult updateRequestStatus(Long userId, Long eventId,
-                                                              EventRequestStatusUpdateRequest updateRequest) {
+            EventRequestStatusUpdateRequest updateRequest) {
         userRepository.findById(userId)
-                .orElseThrow(() -> new EntityNotFoundException(String.format("User with id=%s was not found", userId)));
+                .orElseThrow(() -> new EntityNotFoundException(
+                        String.format("User with id=%s was not found", userId)));
         Event event = eventRepository.findWithCategoryAndInitiator(userId, eventId)
-                .orElseThrow(() -> new EntityNotFoundException(String.format("Event with id=%s was not found", eventId)));
+                .orElseThrow(() -> new EntityNotFoundException(
+                        String.format("Event with id=%s was not found", eventId)));
         List<ParticipationRequest> participationRequests = participationRequestRepository
                 .findAllWithEventAndRequester(eventId, updateRequest.getRequestIds());
         if (updateRequest.getStatus() == UpdateStatus.CONFIRMED) {
@@ -307,20 +336,24 @@ public class EventServiceImpl implements AdminEventService, PublicEventService, 
     }
 
     private EventRequestStatusUpdateResult updateRequestStatusConfirm(Event event,
-                                                                      List<ParticipationRequest> participationRequests) {
-        if (event.getParticipantLimit().equals(UnlimitedParticipationLimit.UNLIMITED_PARTICIPATION_LIMIT) || !event.getRequestModeration()) {
-            List<ParticipationRequestDto> participationRequestDtos = participationRequests.stream()
+            List<ParticipationRequest> participationRequests) {
+        if (event.getParticipantLimit()
+                .equals(UnlimitedParticipationLimit.UNLIMITED_PARTICIPATION_LIMIT)
+                || !event.getRequestModeration()) {
+            List<ParticipationRequestResponseDto> participationRequestResponseDtos = participationRequests.stream()
                     .map(ParticipationRequestMapper::toParticipationRequestDto)
                     .collect(Collectors.toList());
             EventRequestStatusUpdateResult eventRequestStatusUpdateResult = new EventRequestStatusUpdateResult();
-            eventRequestStatusUpdateResult.setConfirmedRequests(participationRequestDtos);
+            eventRequestStatusUpdateResult.setConfirmedRequests(participationRequestResponseDtos);
             return eventRequestStatusUpdateResult;
         }
         int participationRequestConfirmedCount = participationRequestRepository
                 .countAllByStatusInAndEvent_Id(List.of(Status.CONFIRMED), event.getId()).intValue();
-        int availableParticipationLimit = event.getParticipantLimit() - participationRequestConfirmedCount;
+        int availableParticipationLimit =
+                event.getParticipantLimit() - participationRequestConfirmedCount;
         if (availableParticipationLimit == 0) {
-            throw new ParticipationRequestParticipantLimitViolationException("The participant limit has been reached");
+            throw new ParticipationRequestParticipantLimitViolationException(
+                    "The participant limit has been reached");
         }
         if (availableParticipationLimit < participationRequests.size()) {
             participationRequests = participationRequests.subList(0, availableParticipationLimit);
@@ -329,7 +362,7 @@ public class EventServiceImpl implements AdminEventService, PublicEventService, 
         participationRequests.forEach(pr -> pr.setStatus(Status.CONFIRMED));
         participationRequestRepository.saveAll(participationRequests);
         EventRequestStatusUpdateResult eventRequestStatusUpdateResult = new EventRequestStatusUpdateResult();
-        List<ParticipationRequestDto> confirmedRequests = participationRequests.stream()
+        List<ParticipationRequestResponseDto> confirmedRequests = participationRequests.stream()
                 .map(ParticipationRequestMapper::toParticipationRequestDto)
                 .collect(Collectors.toList());
         eventRequestStatusUpdateResult.setConfirmedRequests(confirmedRequests);
@@ -338,7 +371,7 @@ public class EventServiceImpl implements AdminEventService, PublicEventService, 
                     .findAllByEventAndStatusesFetch(event.getId(), List.of(Status.PENDING));
             rejectedParticipationRequests.forEach(pr -> pr.setStatus(Status.REJECTED));
             participationRequestRepository.saveAll(rejectedParticipationRequests);
-            List<ParticipationRequestDto> rejectedRequests = rejectedParticipationRequests.stream()
+            List<ParticipationRequestResponseDto> rejectedRequests = rejectedParticipationRequests.stream()
                     .map(ParticipationRequestMapper::toParticipationRequestDto)
                     .collect(Collectors.toList());
             eventRequestStatusUpdateResult.setRejectedRequests(rejectedRequests);
@@ -346,20 +379,22 @@ public class EventServiceImpl implements AdminEventService, PublicEventService, 
         return eventRequestStatusUpdateResult;
     }
 
-    private EventRequestStatusUpdateResult updateRequestStatusCancel(List<ParticipationRequest> participationRequests) {
+    private EventRequestStatusUpdateResult updateRequestStatusCancel(
+            List<ParticipationRequest> participationRequests) {
         validateParticipationRequestStatus(participationRequests);
         participationRequests.forEach(pr -> pr.setStatus(Status.REJECTED));
         participationRequestRepository.saveAll(participationRequests);
-        List<ParticipationRequestDto> participationRequestDtos = participationRequests.stream()
+        List<ParticipationRequestResponseDto> participationRequestResponseDtos = participationRequests.stream()
                 .map(ParticipationRequestMapper::toParticipationRequestDto)
                 .collect(Collectors.toList());
         EventRequestStatusUpdateResult eventRequestStatusUpdateResult = new EventRequestStatusUpdateResult();
-        eventRequestStatusUpdateResult.setRejectedRequests(participationRequestDtos);
+        eventRequestStatusUpdateResult.setRejectedRequests(participationRequestResponseDtos);
         return eventRequestStatusUpdateResult;
     }
 
 
-    private void validateParticipationRequestStatus(List<ParticipationRequest> participationRequests) {
+    private void validateParticipationRequestStatus(
+            List<ParticipationRequest> participationRequests) {
         participationRequests.stream()
                 .filter(pr -> pr.getStatus() != Status.PENDING).findFirst()
                 .ifPresent(pr -> {

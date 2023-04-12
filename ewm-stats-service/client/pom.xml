@@ -1,58 +1,59 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns="http://maven.apache.org/POM/4.0.0"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <artifactId>client</artifactId>
 
-    <parent>
-        <artifactId>ewm-stats-service</artifactId>
-        <groupId>ru.practicum</groupId>
-        <version>0.0.1-SNAPSHOT</version>
-    </parent>
+  <dependencies>
+    <dependency>
+      <artifactId>spring-boot-starter-webflux</artifactId>
+      <groupId>org.springframework.boot</groupId>
+    </dependency>
+    <dependency>
+      <artifactId>spring-boot-starter-test</artifactId>
+      <groupId>org.springframework.boot</groupId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <artifactId>dto</artifactId>
+      <groupId>ru.practicum</groupId>
+      <scope>compile</scope>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <artifactId>okhttp</artifactId>
+      <groupId>com.squareup.okhttp3</groupId>
+      <scope>test</scope>
+      <version>${mockWebServer.version}</version>
+    </dependency>
+    <dependency>
+      <artifactId>mockwebserver</artifactId>
+      <groupId>com.squareup.okhttp3</groupId>
+      <scope>test</scope>
+      <version>${mockWebServer.version}</version>
+    </dependency>
+    <dependency>
+      <artifactId>lombok</artifactId>
+      <groupId>org.projectlombok</groupId>
+      <optional>true</optional>
+    </dependency>
+    <dependency>
+      <artifactId>spring-boot-starter-actuator</artifactId>
+      <groupId>org.springframework.boot</groupId>
+    </dependency>
+  </dependencies>
 
-    <artifactId>client</artifactId>
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <artifactId>ewm-stats-service</artifactId>
+    <groupId>ru.practicum</groupId>
     <version>0.0.1-SNAPSHOT</version>
+  </parent>
 
-    <properties>
-        <mockWebServer.version>4.10.0</mockWebServer.version>
-    </properties>
+  <properties>
+    <mockWebServer.version>4.10.0</mockWebServer.version>
+  </properties>
 
-    <dependencies>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-webflux</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>ru.practicum</groupId>
-            <artifactId>dto</artifactId>
-            <version>${project.version}</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.squareup.okhttp3</groupId>
-            <artifactId>okhttp</artifactId>
-            <version>${mockWebServer.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.squareup.okhttp3</groupId>
-            <artifactId>mockwebserver</artifactId>
-            <version>${mockWebServer.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-actuator</artifactId>
-        </dependency>
-    </dependencies>
+  <version>0.0.1-SNAPSHOT</version>
 
 </project>

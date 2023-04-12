@@ -4,16 +4,16 @@ import ru.practicum.ewm.category.model.Category;
 
 public class CategoryMapper {
 
-    public static CategoryDto toCategoryDto(Category category) {
-        CategoryDto categoryDto = new CategoryDto();
-        categoryDto.setId(category.getId());
-        categoryDto.setName(category.getName());
-        return categoryDto;
+    public static CategoryResponseDto toCategoryDto(Category category) {
+        CategoryResponseDto categoryResponseDto = new CategoryResponseDto();
+        categoryResponseDto.setId(category.getId());
+        categoryResponseDto.setName(category.getName());
+        return categoryResponseDto;
     }
 
-    public static Category toCategory(NewCategoryDto newCategoryDto) {
+    public static Category toCategory(CategoryRequestDto categoryRequestDto) {
         Category category = new Category();
-        category.setName(newCategoryDto.getName());
+        category.setName(categoryRequestDto.getName());
         return category;
     }
 }
