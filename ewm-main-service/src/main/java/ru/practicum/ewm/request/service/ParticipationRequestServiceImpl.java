@@ -21,12 +21,19 @@ import ru.practicum.ewm.state.Status;
 import ru.practicum.ewm.user.model.User;
 import ru.practicum.ewm.user.storage.UserRepository;
 
+import ru.practicum.ewm.util.constant.UnlimitedParticipationLimit;
+
+
+
 @Service
 @RequiredArgsConstructor
 @Transactional
 public class ParticipationRequestServiceImpl implements ParticipationRequestService {
 
+
+
     private static final int UNLIMITED_PARTICIPATION_LIMIT = 0;
+
 
     private final ParticipationRequestRepository participationRequestRepository;
     private final UserRepository userRepository;
@@ -77,7 +84,9 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
     }
 
     private void validateParticipationLimit(Event event) {
-        if (event.getParticipantLimit().equals(UNLIMITED_PARTICIPATION_LIMIT)) {
+
+        if (event.getParticipantLimit().equals(UnlimitedParticipationLimit.UNLIMITED_PARTICIPATION_LIMIT)) {
+
             return;
         }
         List<Status> statusAcceptedRequests =
@@ -95,7 +104,7 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
         if (!event.getRequestModeration()) {
             return Status.CONFIRMED;
         }
-        if (event.getParticipantLimit().equals(UNLIMITED_PARTICIPATION_LIMIT)) {
+        if (event.getParticipantLimit().equals(UnlimitedParticipationLimit.UNLIMITED_PARTICIPATION_LIMIT)) {
             return Status.CONFIRMED;
         }
         return Status.PENDING;
